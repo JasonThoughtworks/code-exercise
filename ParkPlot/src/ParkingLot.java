@@ -19,11 +19,22 @@ public class ParkingLot {
             carMap.put(receipt, car);
             return receipt;
         }
-
         return null;
     }
 
-    public Car retrive(Receipt receipt) {
+    public Car retrieve(Receipt receipt) {
         return carMap.get(receipt);
+    }
+
+    private Double calculateVacancyRate() {
+        return Double.valueOf(getAvailableParkingLotNumber() / totalParkingLots);
+    }
+
+    boolean isVacancyRateHigher(ParkingLot highestVacancyRateParkingLot) {
+        return calculateVacancyRate() > highestVacancyRateParkingLot.calculateVacancyRate();
+    }
+
+    boolean hasMoreAvailableParkingLots(ParkingLot mostParkingLot) {
+        return getAvailableParkingLotNumber() > mostParkingLot.getAvailableParkingLotNumber();
     }
 }

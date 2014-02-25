@@ -1,64 +1,57 @@
-import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public class ParkingLotManagerTest {
 
     private ParkingLotManager parkingLotManager;
 
-    @Before
-    public void setUp() throws Exception {
-        ParkingLot parkingLot = new ParkingLot(10);
-        parkingLotManager = new ParkingLotManager();
-        parkingLotManager.addManagedParkingLot(parkingLot);
-
-    }
-
     @Test
     public void should_return_available_parking_lot_number() {
-        assertThat(parkingLotManager.getAvailableParkingLotNumber(), is(10));
-    }
+        parkingLotManager = prepareParkingLotManagerWithSpecificTotalParkingLotNumber(1);
 
+        assertThat(parkingLotManager.getAvailableParkingLotNumber(), is(1));
+    }
 
     @Test
     public void should_get_a_receipt_when_ask_manager_parking_my_car_successfully() {
+        parkingLotManager = prepareParkingLotManagerWithSpecificTotalParkingLotNumber(1);
         Car car = new Car();
         Receipt receipt = parkingLotManager.park(car);
-        assertNotNull(receipt);
+        assertSame(car, parkingLotManager.retrieve(receipt));
     }
 
     @Test
     public void should_not_get_a_receipt_when_all_parking_lot_has_no_available_parking_lots() {
-        ParkingLot parkingLotWithNoLots = new ParkingLot(0);
-        ParkingLotManager parkingLotManagerWithNoLots = new ParkingLotManager();
-        parkingLotManagerWithNoLots.addManagedParkingLot(parkingLotWithNoLots);
-        Car car = new Car();
-
-        Receipt receipt = parkingLotManagerWithNoLots.park(car);
+        ParkingLotManager parkingLotManagerWithNoLots = prepareParkingLotManagerWithSpecificTotalParkingLotNumber(0);
+        Receipt receipt = parkingLotManagerWithNoLots.park(new Car());
         assertNull(receipt);
     }
 
+
     @Test
     public void should_get_a_different_receipt_when_another_car_parking_at_parking_lots() {
-        Car car1 = new Car();
-        Receipt receipt1 = parkingLotManager.park(car1);
-
-        Car car2 = new Car();
-        Receipt receipt2 = parkingLotManager.park(car2);
-        assertFalse(receipt1.equals(receipt2));
+        parkingLotManager = prepareParkingLotManagerWithSpecificTotalParkingLotNumber(2);
+        Receipt receipt = parkingLotManager.park(new Car());
+        Receipt anotherReceipt = parkingLotManager.park(new Car());
+        assertNotSame(receipt, anotherReceipt);
     }
 
     @Test
     public void should_take_a_car_out_with_specific_receipt() throws Exception {
+        parkingLotManager = prepareParkingLotManagerWithSpecificTotalParkingLotNumber(1);
         Car car = new Car();
         Receipt receipt = parkingLotManager.park(car);
-
-        Car car2 = parkingLotManager.retrive(receipt);
-
-        assertEquals(car, car2);
+        Car retrieveCar = parkingLotManager.retrieve(receipt);
+        assertSame(car, retrieveCar);
     }
 
+    private ParkingLotManager prepareParkingLotManagerWithSpecificTotalParkingLotNumber(int ParkingLotNum) {
+        ArrayList<ParkingLot> managedParkingLotList = new ArrayList<ParkingLot>();
+        managedParkingLotList.add(new ParkingLot(ParkingLotNum));
+        return new ParkingLotManager(managedParkingLotList);
+    }
 }

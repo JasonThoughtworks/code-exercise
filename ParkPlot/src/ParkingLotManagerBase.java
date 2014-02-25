@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParkingLotManager {
+public abstract class ParkingLotManagerBase {
     protected List<ParkingLot> managedParkingLotList = new ArrayList<ParkingLot>();
 
-    public ParkingLotManager(List<ParkingLot> managedParkingLotList) {
+    public ParkingLotManagerBase(List<ParkingLot> managedParkingLotList) {
         this.managedParkingLotList = managedParkingLotList;
     }
 
@@ -24,14 +24,7 @@ public class ParkingLotManager {
         return null;
     }
 
-    protected ParkingLot getParkingLot() {
-        for (ParkingLot parkingLot : managedParkingLotList) {
-            if (parkingLot.getAvailableParkingLotNumber() > 0) {
-                return parkingLot;
-            }
-        }
-        return null;
-    }
+    protected abstract ParkingLot getParkingLot();
 
     public Car retrieve(Receipt receipt) {
         for (ParkingLot parkingLot : managedParkingLotList) {
